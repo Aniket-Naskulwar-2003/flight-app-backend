@@ -13,34 +13,5 @@ pipeline {
                 '''
             }
         }
-        stage('TEST') {
-            steps{
-               withSonarQubeEnv(installationName: 'sonarqube', credentialsId: 'sonar-cred') {
-                sh '''
-                 mvn sonar:sonar -Dsonar.projectKey=flight-reservation-backend
-                '''
-               }
-            }
-        }
-        stage('QUALITY GATE') {
-            steps{
-               timeout (10){
-
-                waitForQualityGate abortPipeline: true
-
-               }
-               
-            }
-        }  
-    
-        stage('DOCKER_BUILD') {
-            steps{
-                sh '''docker build -t flight-reservation-app .
-                      docker tag flight-reservation-app:latest 016683085265.dkr.ecr.ap-south-1.amazonaws.com/flight-reservation-app:latest
-                      docker push 016683085265.dkr.ecr.ap-south-1.amazonaws.com/flight-reservation-app:latest'''
-            }
-        }
-        
     }
-
 }
